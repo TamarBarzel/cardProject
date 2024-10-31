@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { IoTrashSharp } from "react-icons/io5";
 import ColorPicker from "./ColorPicker";
 
+
+
 const CardItem = ({ card, onDelete, onEdit }) => {
   const [isEditingText, setIsEditingText] = useState(false);
   const [isEditingColor, setIsEditingColor] = useState(false);

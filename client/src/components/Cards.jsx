@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CardItem from "./CardItem";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Cards = () => {
   const [cards, setCards] = useState([]);
@@ -19,6 +20,16 @@ const Cards = () => {
     };
     fetchCards();
   }, []);
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const updatedCards = Array.from(cards);
+    const [removed] = updatedCards.splice(result.source.index, 1);
+    updatedCards.splice(result.destination.index, 0, removed); // העברה ליעד הנכון
+
+    setCards(updatedCards);
+  };
 
   const handleAddCard = async () => {
     try {
@@ -60,26 +71,48 @@ const Cards = () => {
   };
 
   return (
-    <div>
-      <h2>Cards List</h2>
-      {loading ? (
-        <p>Loading cards...</p>
-      ) : (
-        <div className="cards-container">
-          {cards.map((card) => (
-            <CardItem
-              key={card.id}
-              card={card}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          ))}
-          <div className="add-card" onClick={handleAddCard}>
-            <span className="add-icon">+</span>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId="droppable">
+        {(provided) => (
+          <div
+            ref={provided.innerRef} // שימו לב שפה יש את ה-ref
+            {...provided.droppableProps} // וה-props
+            className="cards-container"
+          >
+            <h2>Cards List</h2>
+            {loading ? (
+              <p>Loading cards...</p>
+            ) : (
+              cards.map((card, index) => ( // השתמש ב-cards
+                <Draggable
+                  key={card.id}
+                  draggableId={card.id.toString()}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef} // שימו לב שה-ref הזה גם קיים
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <CardItem
+                        card={card}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))
+            )}
+            {provided.placeholder}
+            <div className="add-card" onClick={handleAddCard}>
+              <span className="add-icon">+</span>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };
 
