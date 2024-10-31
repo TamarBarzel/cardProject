@@ -51,9 +51,17 @@ app.put("/cards/:id", (req, res) => {
   }
 });
 
+app.put("/cards", (req, res) => {
+  const { fromIndex, toIndex } = req.body;
+
+  const [movedCard] = cards.splice(fromIndex, 1);
+  cards.splice(toIndex, 0, movedCard);
+  res.status(200).json({"success": true, cards })
+});
+
 app.delete("/cards/:id", (req, res) => {
   const cardId = parseInt(req.params.id);
-  const card = cards.find((c) => c.id ===cardId);
+  const card = cards.find((c) => c.id === cardId);
 
   if (card) {
     cards = cards.filter((c) => c.id !== cardId);
