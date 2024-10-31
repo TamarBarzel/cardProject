@@ -21,14 +21,23 @@ const Cards = () => {
     fetchCards();
   }, []);
 
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
     const updatedCards = Array.from(cards);
     const [removed] = updatedCards.splice(result.source.index, 1);
-    updatedCards.splice(result.destination.index, 0, removed); // העברה ליעד הנכון
+    updatedCards.splice(result.destination.index, 0, removed);
+    console.log(updatedCards);
 
     setCards(updatedCards);
+    try {
+      await axios.put("http://localhost:8080/cards", {
+        fromIndex:result.source.index,
+        toIndex:result.destination.index,
+      });
+    } catch (error) {
+      console.error("failed updating new card position", error);
+    }
   };
 
   const handleAddCard = async () => {
@@ -71,48 +80,50 @@ const Cards = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="droppable">
-        {(provided) => (
-          <div
-            ref={provided.innerRef} // שימו לב שפה יש את ה-ref
-            {...provided.droppableProps} // וה-props
-            className="cards-container"
-          >
-            <h2>Cards List</h2>
-            {loading ? (
-              <p>Loading cards...</p>
-            ) : (
-              cards.map((card, index) => ( // השתמש ב-cards
-                <Draggable
-                  key={card.id}
-                  draggableId={card.id.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef} // שימו לב שה-ref הזה גם קיים
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <CardItem
-                        card={card}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))
-            )}
-            {provided.placeholder}
-            <div className="add-card" onClick={handleAddCard}>
-              <span className="add-icon">+</span>
+    <div>
+      <h2>Cards List</h2>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="cards-container"
+            >
+              {loading ? (
+                <p>Loading cards...</p>
+              ) : (
+                cards.map((card, index) => (
+                  <Draggable
+                    key={card.id}
+                    draggableId={card.id.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <CardItem
+                          card={card}
+                          onDelete={handleDelete}
+                          onEdit={handleEdit}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
+                ))
+              )}
+              {provided.placeholder}
+              <div className="add-card" onClick={handleAddCard}>
+                <span className="add-icon">+</span>
+              </div>
             </div>
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   );
 };
 
