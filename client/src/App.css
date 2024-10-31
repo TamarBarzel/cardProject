@@ -1,0 +1,87 @@
+body {
+  background-color: rgb(81, 79, 80);
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* רשת של כרטיסים עם רוחב מינימלי */
+  gap: 16px;
+  padding: 16px;
+}
+
+.card-item,
+.add-card {
+  position: relative;
+  padding: 20px;
+  border-radius: 5%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 16px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.card-item:hover {
+  transform: scale(1.05);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.bottom-container {
+  display: flex;
+  justify-content: space-between; 
+  position: absolute;
+  bottom: 10px; 
+  left: 0;
+  right: 0;
+  padding: 0 10px; 
+}
+
+.delete-icon button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgb(0, 0, 0); 
+  font-size: 20px;
+}
+
+.color-icon button {
+  width: 24px; 
+  height: 24px;
+  border-radius: 50%; 
+  background-color: inherit; 
+  cursor: pointer;
+  border: 2px solid black; 
+  
+}
+
+.add-card {
+  background-color: #f9f9f9;
+  color: #555;
+  text-align: center;
+}
+
+.add-card:hover {
+  background-color: #e0e0e0;
+}
+
+.add-icon {
+  font-size: 2rem;
+}
+
+.color-picker-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.color-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #fff;
+}
